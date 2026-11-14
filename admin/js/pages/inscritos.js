@@ -144,7 +144,7 @@
         const evento = inscricao.evento?.nome ?? "o evento";
         const confirmed = await modal.confirm({
             title: "Remover inscrição?",
-            message: `A inscrição de "${nome}" em "${evento}" será removida e a vaga volta a ficar disponível.`,
+            message: `A inscrição de "${nome}" na oficina "${evento}" será removida e a vaga à mesa volta a ficar disponível.`,
             confirmLabel: "Remover inscrição"
         });
         if (!confirmed) return;

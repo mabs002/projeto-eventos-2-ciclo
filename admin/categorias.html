@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark light">
-    <title>Categorias | Painel Administrativo</title>
+    <title>Categorias Culinárias | Painel do Chef</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,14 +27,16 @@
 
 <body>
     <nav class="header-menu">
-        <img class="logo" alt="logotipo eventos fatec" title="Logotipo eventos fatec"
-            src="../assets/images/logotipo-eventos-fatec.png" />
+        <a href="index.html" class="brand">
+            <img class="logo" alt="GastroEventos — Painel" title="GastroEventos Culinária"
+                src="../assets/images/logo-gastro.svg" />
+        </a>
         <ul class="navigation">
             <li class="item">
                 <a class="link" href="index.html">Painel</a>
             </li>
             <li class="item">
-                <a class="link" href="eventos.html">Eventos</a>
+                <a class="link" href="eventos.html">Experiências</a>
             </li>
             <li class="item">
                 <a class="link active" href="categorias.html">Categorias</a>
@@ -43,7 +45,7 @@
                 <a class="link" href="inscritos.html">Inscritos</a>
             </li>
             <li class="item">
-                <a class="link" href="usuarios.html">Usuários</a>
+                <a class="link" href="usuarios.html">Chefs & Usuários</a>
             </li>
             <li class="item">
                 <a class="link" id="logout" href="login.html">Sair</a>
@@ -54,8 +56,8 @@
     <main class="admin">
         <div class="admin-header">
             <div>
-                <h1>Categorias</h1>
-                <p>Gerencie as categorias usadas para organizar e filtrar os eventos.</p>
+                <h1>Categorias Culinárias 🍷</h1>
+                <p>Gerencie as especialidades e temas usados para organizar os workshops.</p>
             </div>
             <button type="button" class="btn-cta" id="nova-categoria">Nova categoria</button>
         </div>
@@ -63,15 +65,15 @@
         <p class="feedback" id="categoria-feedback" role="status" aria-live="polite"></p>
 
         <section class="admin-panel">
-            <h2>Categorias cadastradas</h2>
+            <h2>Especialidades cadastradas</h2>
 
             <div class="admin-table-wrap">
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>Categoria</th>
+                            <th>Especialidade</th>
                             <th>Slug</th>
-                            <th>Eventos vinculados</th>
+                            <th>Oficinas vinculadas</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -87,15 +89,15 @@
 
                 <div class="form-row">
                     <div class="form-field">
-                        <label for="campo-nome-categoria">Nome da categoria</label>
-                        <input type="text" id="campo-nome-categoria" name="nome" placeholder="Ex: Feira de Carreiras"
+                        <label for="campo-nome-categoria">Nome da especialidade</label>
+                        <input type="text" id="campo-nome-categoria" name="nome" placeholder="Ex: Massas Artesanais & Molhos"
                             maxlength="60" required />
                         <span class="error">O nome é obrigatório</span>
                     </div>
 
                     <div class="form-field">
                         <label for="campo-slug-categoria">Slug</label>
-                        <input type="text" id="campo-slug-categoria" name="slug" placeholder="Ex: feira-de-carreiras"
+                        <input type="text" id="campo-slug-categoria" name="slug" placeholder="Ex: massas-artesanais"
                             aria-describedby="ajuda-slug" required />
                         <small class="field-hint" id="ajuda-slug">Gerado a partir do nome. Usado na URL.</small>
                         <span class="error">O slug é obrigatório</span>
@@ -103,21 +105,21 @@
 
                     <div class="form-field">
                         <label for="campo-cor-categoria">Cor de destaque</label>
-                        <input type="color" id="campo-cor-categoria" name="cor" value="#e20543" />
+                        <input type="color" id="campo-cor-categoria" name="cor" value="#e04826" />
                         <span class="error">Cor inválida</span>
                     </div>
                 </div>
 
                 <div class="form-actions">
                     <button type="button" class="btn-ghost" data-modal-close>Cancelar</button>
-                    <button type="submit" id="salvar-categoria" class="call-to-action">Salvar categoria</button>
+                    <button type="submit" id="salvar-categoria" class="call-to-action">Salvar especialidade</button>
                 </div>
             </form>
         </div>
     </main>
 
     <footer class="footer">
-        <p>© 2026 Eventos Fatec — Projeto de Desenvolvimento Web, 2º ciclo.</p>
+        <p>© 2026 GastroEventos — Projeto de Desenvolvimento Web, 2º ciclo.</p>
     </footer>
 
     <script src="../assets/js/utils/dom.js"></script>

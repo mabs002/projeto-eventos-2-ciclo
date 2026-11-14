@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Área | GastroEventos</title>
+    <link rel="stylesheet" href="./assets/css/styles.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <script src="./assets/js/theme.js"></script>
+</head>
+
+<body>
+    <nav class="header-menu">
+        <a href="index.html">
+            <img class="logo" alt="logotipo gastro eventos culinários" title="GastroEventos Culinária"
+                src="./assets/images/logo-gastro.svg" />
+        </a>
+        <ul class="navigation">
+            <li class="item">
+                <a class="link" href="index.html">Eventos</a>
+            </li>
+            <li class="item">
+                <a class="link" href="index.html#categorias">Categorias</a>
+            </li>
+            <li class="item">
+                <a class="link active" href="meu-perfil.html">Minhas Inscrições</a>
+            </li>
+            <li class="item">
+                <button type="button" class="btn-nav-logout" id="btn-perfil-sair">Sair</button>
+            </li>
+        </ul>
+    </nav>
+
+    <main class="profile-section">
+        <!-- Card de Perfil do Usuário -->
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-avatar-wrap">
+                    <div class="profile-avatar" id="avatar-inicial">U</div>
+                    <div class="profile-details">
+                        <h2 id="usuario-nome">Carregando...</h2>
+                        <p id="usuario-email">...</p>
+                        <div class="profile-badges">
+                            <span class="badge" id="usuario-papel-badge">Participante</span>
+                            <span class="badge badge-active" id="usuario-status-badge">Conta Ativa</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <a href="index.html" class="btn-cta" style="background-color: var(--bg-button); color: var(--pink-primary); border: 1px solid var(--border-light);">Explorar mais eventos</a>
+                    <a href="admin/index.html" class="btn-cta" id="btn-acesso-admin" style="display: none; background: linear-gradient(135deg, var(--pink-primary), var(--pink-secondary)); color:#fff;">⚙️ Painel do Chef / Admin</a>
+                </div>
+            </div>
+
+            <!-- Avisos e Notificações -->
+            <div class="alert alert-success" id="alerta-perfil"></div>
+
+            <!-- Minhas Inscrições -->
+            <div>
+                <h3 style="font-size: 20px; color: var(--text-dark); margin-bottom: 8px;">Minhas Inscrições Confirmadas 🎟️</h3>
+                <p style="color: var(--text-gray); font-size: 14px; margin-bottom: 20px;">
+                    Apresente seu código de confirmação na entrada da experiência gastronômica.
+                </p>
+
+                <!-- Loading Skeleton -->
+                <div id="loading-inscricoes" style="text-align: center; padding: 40px; color: var(--text-gray);">
+                    <p>Carregando suas inscrições...</p>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-inscricoes" class="empty-state" style="display: none;">
+                    <p style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">Você ainda não se inscreveu em nenhuma experiência gastronômica.</p>
+                    <p style="color: var(--text-gray); font-size: 14px; margin-bottom: 20px;">Confira nossa programação de oficinas de bolos, pães, boteco e festivais!</p>
+                    <a href="index.html" class="btn-cta">Ver programação completa de eventos</a>
+                </div>
+
+                <!-- Grid de Inscrições -->
+                <div class="user-subscriptions-grid" id="lista-inscricoes" style="display: none;"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>© 2026 GastroEventos — Experiências Culinárias, 2º ciclo.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./supabase-credentials.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/api.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            // Verifica autenticação
+            const user = Auth.requireAuth("meu-perfil.html");
+            if (!user) return;
+
+            // Preenche dados do perfil
+            document.getElementById("usuario-nome").textContent = user.nome;
+            document.getElementById("usuario-email").textContent = user.email;
+            document.getElementById("avatar-inicial").textContent = (user.nome || "U").charAt(0).toUpperCase();
+
+            const badgePapel = document.getElementById("usuario-papel-badge");
+            if (user.papel === "administrador") {
+                badgePapel.textContent = "Administrador / Chef";
+                badgePapel.className = "badge badge-admin";
+                document.getElementById("btn-acesso-admin").style.display = "inline-flex";
+            } else {
+                badgePapel.textContent = "Participante";
+                badgePapel.className = "badge badge-user";
+            }
+
+            // Sair
+            document.getElementById("btn-perfil-sair").addEventListener("click", () => {
+                Auth.logout("index.html");
+            });
+
+            // Carrega inscrições do usuário
+            const loadingEl = document.getElementById("loading-inscricoes");
+            const emptyEl = document.getElementById("empty-inscricoes");
+            const listaEl = document.getElementById("lista-inscricoes");
+            const alertaPerfil = document.getElementById("alerta-perfil");
+
+            async function carregarInscricoes() {
+                loadingEl.style.display = "block";
+                emptyEl.style.display = "none";
+                listaEl.style.display = "none";
+
+                const inscricoes = await EventosAPI.listarInscricoesDoUsuario(user.email);
+                loadingEl.style.display = "none";
+
+                if (!inscricoes || inscricoes.length === 0) {
+                    emptyEl.style.display = "block";
+                    return;
+                }
+
+                listaEl.innerHTML = "";
+                inscricoes.forEach(insc => {
+                    const ev = insc.evento || {};
+                    const catNome = (ev.categoria && ev.categoria.nome) ? ev.categoria.nome : "Gastronomia";
+                    const dataFormatada = EventosAPI.formatarData(ev.data);
+
+                    const card = document.createElement("div");
+                    card.className = "subscription-card";
+                    card.innerHTML = `
+                        <div>
+                            <div class="subscription-card-header">
+                                <span class="category" style="font-size: 12px; margin:0; font-weight:700;">🍽️ ${catNome}</span>
+                                <span class="sub-code">${insc.codigo_confirmacao}</span>
+                            </div>
+                            <h3>${ev.nome || "Experiência Culinária"}</h3>
+                            <div class="subscription-info-item">📅 ${dataFormatada} • ${ev.horario || "Horário a confirmar"}</div>
+                            <div class="subscription-info-item">📍 ${ev.local || "Local a confirmar"}</div>
+                            <div class="subscription-info-item" style="font-size: 12px; color: #8c7365;">🏢 ${ev.endereco || ""}</div>
+                        </div>
+                        <div class="subscription-card-footer">
+                            <a href="evento.html?id=${ev.id}" class="link" style="font-size: 13px; font-weight:700;">Ver detalhes →</a>
+                            <button type="button" class="btn-sm btn-delete" data-insc-id="${insc.id}" data-event-id="${ev.id}" data-event-nome="${ev.nome || 'o evento'}">
+                                Cancelar inscrição
+                            </button>
+                        </div>
+                    `;
+                    listaEl.appendChild(card);
+                });
+
+                listaEl.style.display = "grid";
+
+                // Botões de cancelamento
+                listaEl.querySelectorAll(".btn-delete").forEach(btn => {
+                    btn.addEventListener("click", async function () {
+                        const inscId = this.getAttribute("data-insc-id");
+                        const evId = this.getAttribute("data-event-id");
+                        const evNome = this.getAttribute("data-event-nome");
+
+                        if (!confirm(`Tem certeza de que deseja cancelar sua inscrição em "${evNome}"?`)) {
+                            return;
+                        }
+
+                        this.disabled = true;
+                        this.textContent = "Cancelando...";
+
+                        const res = await EventosAPI.cancelarInscricao(inscId, evId);
+                        if (res.sucesso) {
+                            alertaPerfil.textContent = `Inscrição em "${evNome}" cancelada com sucesso. A vaga foi liberada.`;
+                            alertaPerfil.classList.add("show");
+                            setTimeout(() => alertaPerfil.classList.remove("show"), 4000);
+                            await carregarInscricoes();
+                        } else {
+                            alert(res.erro || "Não foi possível cancelar a inscrição.");
+                            this.disabled = false;
+                            this.textContent = "Cancelar inscrição";
+                        }
+                    });
+                });
+            }
+
+            await carregarInscricoes();
+        });
+    </script>
+</body>
+
+</html>

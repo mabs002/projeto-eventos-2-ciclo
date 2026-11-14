@@ -12,7 +12,7 @@
 (function theme() {
     "use strict";
 
-    const STORAGE_KEY = "eventos-fatec:tema";
+    const STORAGE_KEY = "gastro-eventos:tema";
     const root = document.documentElement;
     const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");

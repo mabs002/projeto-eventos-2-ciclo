@@ -129,7 +129,7 @@
         renderSummary();
         elements.breadcrumbEvent.textContent = evento.nome;
         elements.breadcrumbEvent.href = `evento.html?id=${encodeURIComponent(evento.id)}`;
-        document.title = `Inscrição: ${evento.nome} | Eventos Fatec`;
+        document.title = `Inscrição: ${evento.nome} | GastroEventos`;
         elements.birth.max = text.todayIso();
 
         elements.loading.hidden = true;
@@ -165,11 +165,11 @@
         content.querySelector('[data-slot="evento"]').textContent = `${evento.nome} · ${text.formatDateLong(evento.data)}`;
 
         await modal.show({
-            title: "Inscrição confirmada!",
+            title: "Vaga à mesa confirmada! 👨‍🍳🎉",
             content,
             tone: "success",
             actions: [
-                { label: "Ver evento", href: `evento.html?id=${encodeURIComponent(evento.id)}`, variant: "primary" },
+                { label: "Ver experiência", href: `evento.html?id=${encodeURIComponent(evento.id)}`, variant: "primary" },
                 { label: "Fechar", value: "fechar", variant: "ghost" }
             ]
         });
@@ -224,7 +224,7 @@
     async function init() {
         const id = new URLSearchParams(window.location.search).get("id");
         if (!/^\d+$/.test(id ?? "")) {
-            showEmpty("Nenhum evento selecionado", "Escolha um evento para se inscrever.");
+            showEmpty("Nenhuma experiência selecionada", "Escolha uma oficina gastronômica para se inscrever.");
             return;
         }
 
@@ -232,20 +232,20 @@
             evento = await catalogoService.getEvento(id);
         } catch (error) {
             console.error("[inscricao] Falha ao carregar evento:", error);
-            showEmpty("Não foi possível carregar o evento", "Verifique sua conexão e tente novamente.");
+            showEmpty("Não foi possível carregar a oficina", "Verifique sua conexão e tente novamente.");
             return;
         }
 
         if (!evento) {
-            showEmpty("Evento não encontrado", "O link pode estar incorreto ou o evento foi removido.");
+            showEmpty("Experiência não encontrada", "O link pode estar incorreto ou a oficina foi cancelada.");
             return;
         }
 
         const situacao = eventoView.situacao(evento);
         if (!situacao.aberto) {
             const message = situacao.status === "encerrado"
-                ? "Este evento já aconteceu."
-                : "Todas as vagas deste evento foram preenchidas.";
+                ? "Esta experiência já aconteceu."
+                : "Todas as vagas à mesa foram preenchidas.";
             showEmpty(situacao.status === "encerrado" ? "Inscrição encerrada" : "Vagas esgotadas", message);
             return;
         }

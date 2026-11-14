@@ -7,7 +7,7 @@
     "use strict";
 
     const TABLE_COLUMNS = 4;
-    const DEFAULT_COLOR = "#e20543";
+    const DEFAULT_COLOR = "#e04826";
     const HEX_COLOR_PATTERN = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
     const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 

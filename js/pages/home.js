@@ -125,14 +125,14 @@
     function renderGrid() {
         const eventos = filtrar();
         const total = eventos.length;
-        elements.counter.textContent = `${total} ${total === 1 ? "evento encontrado" : "eventos encontrados"}`;
+        elements.counter.textContent = `${total} ${total === 1 ? "experiência encontrada" : "experiências encontradas"}`;
 
         if (total === 0) {
             const sugereTodos = state.filtros.periodo !== "todos";
             elements.grid.innerHTML = `
                 <div class="empty-state" data-reveal>
-                    <p class="empty-state-title">Nenhum evento encontrado</p>
-                    <p>Tente outro termo, categoria ou período.</p>
+                    <p class="empty-state-title">Nenhuma experiência culinária encontrada</p>
+                    <p>Tente buscar por outro termo, chef, especialidade ou período.</p>
                     ${sugereTodos ? '<button type="button" class="btn-ghost" data-action="ver-todos">Ver todas as datas</button>' : ""}
                 </div>`;
         } else {
@@ -164,7 +164,7 @@
         elements.counter.textContent = "";
         elements.grid.innerHTML = `
             <div class="empty-state">
-                <p class="empty-state-title">Não foi possível carregar os eventos</p>
+                <p class="empty-state-title">Não foi possível carregar as experiências gastronômicas</p>
                 <p>Verifique sua conexão e tente novamente.</p>
                 <button type="button" class="btn-ghost" data-action="recarregar">Tentar novamente</button>
             </div>`;
@@ -249,7 +249,7 @@
     async function load() {
         elements.grid.innerHTML = eventoView.skeletonCards(6);
         elements.carousel.innerHTML = eventoView.skeletonCards(4, "featured");
-        elements.counter.textContent = "Carregando eventos...";
+        elements.counter.textContent = "Carregando experiências culinárias...";
 
         try {
             const [eventos, categorias] = await Promise.all([

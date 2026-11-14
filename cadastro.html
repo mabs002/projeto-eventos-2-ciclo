@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro | GastroEventos</title>
+    <link rel="stylesheet" href="./assets/css/styles.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <script src="./assets/js/theme.js"></script>
+</head>
+
+<body>
+    <nav class="header-menu">
+        <a href="index.html">
+            <img class="logo" alt="logotipo gastro eventos culinários" title="GastroEventos Culinária"
+                src="./assets/images/logo-gastro.svg" />
+        </a>
+        <ul class="navigation">
+            <li class="item">
+                <a class="link" href="index.html">Eventos</a>
+            </li>
+            <li class="item">
+                <a class="link" href="index.html#categorias">Categorias</a>
+            </li>
+            <li class="item">
+                <a class="link" href="login.html">Entrar</a>
+            </li>
+            <li class="item">
+                <a class="call-to-action active" href="cadastro.html" style="text-decoration:none;">Criar conta</a>
+            </li>
+        </ul>
+    </nav>
+
+    <main class="login" style="max-width: 480px;">
+        <h1>Junte-se a nós! 👨‍🍳</h1>
+        <p>Crie sua conta gratuita para participar de workshops, degustações e experiências culinárias.</p>
+
+        <div class="alert alert-error" id="alerta-erro"></div>
+        <div class="alert alert-success" id="alerta-sucesso"></div>
+
+        <div class="admin-panel">
+            <form class="admin-form" id="form-cadastro" novalidate>
+                <div class="form-field">
+                    <label for="campo-nome">Nome completo</label>
+                    <input type="text" id="campo-nome" name="nome" placeholder="Ex: Maria Eduarda Silva" required />
+                </div>
+
+                <div class="form-field">
+                    <label for="campo-email">E-mail</label>
+                    <input type="email" id="campo-email" name="email" placeholder="voce@exemplo.com" required
+                        autocomplete="email" />
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="campo-senha">Senha</label>
+                        <input type="password" id="campo-senha" name="senha" placeholder="Mínimo 4 caracteres" required
+                            autocomplete="new-password" />
+                    </div>
+
+                    <div class="form-field">
+                        <label for="campo-confirma-senha">Confirmar senha</label>
+                        <input type="password" id="campo-confirma-senha" name="confirmaSenha" placeholder="Repita a senha" required
+                            autocomplete="new-password" />
+                    </div>
+                </div>
+
+                <button type="submit" class="call-to-action" id="btn-cadastrar" style="margin-top: 10px;">Finalizar meu cadastro</button>
+            </form>
+        </div>
+
+        <p style="margin-top: 15px; font-size: 14px;">
+            Já possui uma conta? <a href="login.html" style="color: var(--pink-primary); font-weight: 700; text-decoration: underline;">Faça login aqui</a>
+        </p>
+    </main>
+
+    <footer class="footer">
+        <p>© 2026 GastroEventos — Experiências Culinárias, 2º ciclo.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./supabase-credentials.js"></script>
+    <script src="./js/auth.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("form-cadastro");
+            const campoNome = document.getElementById("campo-nome");
+            const campoEmail = document.getElementById("campo-email");
+            const campoSenha = document.getElementById("campo-senha");
+            const campoConfirmaSenha = document.getElementById("campo-confirma-senha");
+            const alertaErro = document.getElementById("alerta-erro");
+            const alertaSucesso = document.getElementById("alerta-sucesso");
+            const btnCadastrar = document.getElementById("btn-cadastrar");
+
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                alertaErro.classList.remove("show");
+                alertaSucesso.classList.remove("show");
+
+                const nome = campoNome.value.trim();
+                const email = campoEmail.value.trim();
+                const senha = campoSenha.value.trim();
+                const confirmaSenha = campoConfirmaSenha.value.trim();
+
+                if (!nome || !email || !senha) {
+                    alertaErro.textContent = "Preencha todos os campos obrigatórios.";
+                    alertaErro.classList.add("show");
+                    return;
+                }
+
+                if (senha !== confirmaSenha) {
+                    alertaErro.textContent = "As senhas não coincidem. Digite novamente.";
+                    alertaErro.classList.add("show");
+                    return;
+                }
+
+                btnCadastrar.disabled = true;
+                btnCadastrar.textContent = "Criando sua conta...";
+
+                const resultado = await Auth.register(nome, email, senha);
+
+                if (!resultado.sucesso) {
+                    alertaErro.textContent = resultado.erro;
+                    alertaErro.classList.add("show");
+                    btnCadastrar.disabled = false;
+                    btnCadastrar.textContent = "Finalizar meu cadastro";
+                    return;
+                }
+
+                alertaSucesso.textContent = "Conta criada com sucesso! Seja bem-vindo(a)!";
+                alertaSucesso.classList.add("show");
+
+                setTimeout(() => {
+                    window.location.href = "meu-perfil.html";
+                }, 900);
+            });
+        });
+    </script>
+</body>
+
+</html>

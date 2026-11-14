@@ -13,7 +13,7 @@
 
     const PAPEIS = {
         administrador: { label: "Administrador", badge: "badge-admin" },
-        usuario: { label: "Usuário", badge: "badge-user" }
+        usuario: { label: "Chef / Organizador", badge: "badge-user" }
     };
     const STATUS = {
         ativo: { label: "Ativo", badge: "badge-active" },

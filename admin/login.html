@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark light">
-    <title>Entrar | Painel Administrativo</title>
+    <title>Entrar no Painel do Chef | GastroEventos</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,8 +20,10 @@
 
 <body>
     <nav class="header-menu">
-        <img class="logo" alt="logotipo eventos fatec" title="Logotipo eventos fatec"
-            src="../assets/images/logotipo-eventos-fatec.png" />
+        <a href="../index.html" class="brand">
+            <img class="logo" alt="GastroEventos — Início" title="GastroEventos Culinária"
+                src="../assets/images/logo-gastro.svg" />
+        </a>
         <ul class="navigation">
             <li class="item">
                 <a class="link" href="../index.html">Voltar para o site</a>
@@ -30,16 +32,16 @@
     </nav>
 
     <main class="login">
-        <h1>Entrar no painel</h1>
-        <p>Acesso restrito à equipe organizadora dos eventos.</p>
+        <h1>Entrar no painel do Chef 👨‍🍳</h1>
+        <p>Acesso restrito aos chefs, organizadores e equipe do GastroEventos.</p>
 
         <div class="admin-panel">
             <p class="feedback" id="login-feedback" role="alert" aria-live="assertive"></p>
 
             <form class="admin-form" id="form-login" novalidate>
                 <div class="form-field">
-                    <label for="campo-email">E-mail</label>
-                    <input type="email" id="campo-email" name="email" placeholder="voce@fatec.sp.gov.br"
+                    <label for="campo-email">E-mail de acesso</label>
+                    <input type="email" id="campo-email" name="email" placeholder="chef@gastroeventos.com"
                         autocomplete="username" required />
                     <span class="error">Informe o e-mail.</span>
                 </div>
@@ -51,13 +53,13 @@
                     <span class="error">Informe a senha.</span>
                 </div>
 
-                <button type="submit" class="call-to-action">Entrar</button>
+                <button type="submit" class="call-to-action">Entrar na Cozinha</button>
             </form>
         </div>
     </main>
 
     <footer class="footer">
-        <p>© 2026 Eventos Fatec — Projeto de Desenvolvimento Web, 2º ciclo.</p>
+        <p>© 2026 GastroEventos — Projeto de Desenvolvimento Web, 2º ciclo.</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.min.js"></script>

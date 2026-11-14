@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar | GastroEventos</title>
+    <link rel="stylesheet" href="./assets/css/styles.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <script src="./assets/js/theme.js"></script>
+</head>
+
+<body>
+    <nav class="header-menu">
+        <a href="index.html">
+            <img class="logo" alt="logotipo gastro eventos culinários" title="GastroEventos Culinária"
+                src="./assets/images/logo-gastro.svg" />
+        </a>
+        <ul class="navigation">
+            <li class="item">
+                <a class="link" href="index.html">Eventos</a>
+            </li>
+            <li class="item">
+                <a class="link" href="index.html#categorias">Categorias</a>
+            </li>
+            <li class="item">
+                <a class="link active" href="login.html">Entrar</a>
+            </li>
+            <li class="item">
+                <a class="call-to-action" href="cadastro.html" style="text-decoration:none;">Criar conta</a>
+            </li>
+        </ul>
+    </nav>
+
+    <main class="login">
+        <h1>Bem-vindo de volta! 🍽️</h1>
+        <p>Acesse sua conta para conferir suas inscrições gastronômicas ou gerenciar eventos.</p>
+
+        <div class="alert alert-error" id="alerta-erro"></div>
+        <div class="alert alert-success" id="alerta-sucesso"></div>
+
+        <div class="admin-panel">
+            <form class="admin-form" id="form-login" novalidate>
+                <div class="form-field">
+                    <label for="campo-email">E-mail</label>
+                    <input type="email" id="campo-email" name="email" placeholder="seu.email@exemplo.com" required
+                        autocomplete="username" />
+                </div>
+
+                <div class="form-field">
+                    <label for="campo-senha">Senha</label>
+                    <input type="password" id="campo-senha" name="senha" placeholder="Sua senha de acesso" required
+                        autocomplete="current-password" />
+                </div>
+
+                <button type="submit" class="call-to-action" id="btn-entrar" style="margin-top: 10px;">Entrar na conta</button>
+            </form>
+        </div>
+
+        <p style="margin-top: 15px; font-size: 14px;">
+            Ainda não tem conta? <a href="cadastro.html" style="color: var(--pink-primary); font-weight: 700; text-decoration: underline;">Cadastre-se gratuitamente</a>
+        </p>
+    </main>
+
+    <footer class="footer">
+        <p>© 2026 GastroEventos — Experiências Culinárias, 2º ciclo.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./supabase-credentials.js"></script>
+    <script src="./js/auth.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("form-login");
+            const campoEmail = document.getElementById("campo-email");
+            const campoSenha = document.getElementById("campo-senha");
+            const alertaErro = document.getElementById("alerta-erro");
+            const alertaSucesso = document.getElementById("alerta-sucesso");
+            const btnEntrar = document.getElementById("btn-entrar");
+
+            // Se já estiver logado, redireciona
+            const userLogado = Auth.getUser();
+            if (userLogado) {
+                if (userLogado.papel === "administrador") {
+                    window.location.href = "admin/index.html";
+                } else {
+                    window.location.href = "meu-perfil.html";
+                }
+                return;
+            }
+
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                alertaErro.classList.remove("show");
+                alertaSucesso.classList.remove("show");
+
+                const email = campoEmail.value.trim();
+                const senha = campoSenha.value.trim();
+
+                if (!email || !senha) {
+                    alertaErro.textContent = "Por favor, preencha seu e-mail e sua senha.";
+                    alertaErro.classList.add("show");
+                    return;
+                }
+
+                btnEntrar.disabled = true;
+                btnEntrar.textContent = "Entrando...";
+
+                const resultado = await Auth.login(email, senha);
+
+                if (!resultado.sucesso) {
+                    alertaErro.textContent = resultado.erro;
+                    alertaErro.classList.add("show");
+                    btnEntrar.disabled = false;
+                    btnEntrar.textContent = "Entrar na conta";
+                    return;
+                }
+
+                alertaSucesso.textContent = "Login realizado com sucesso! Redirecionando...";
+                alertaSucesso.classList.add("show");
+
+                // Redirecionamento
+                const params = new URLSearchParams(window.location.search);
+                const redirectParam = params.get("redirect");
+
+                setTimeout(() => {
+                    if (redirectParam) {
+                        window.location.href = decodeURIComponent(redirectParam);
+                    } else if (resultado.user.papel === "administrador") {
+                        window.location.href = "admin/index.html";
+                    } else {
+                        window.location.href = "meu-perfil.html";
+                    }
+                }, 800);
+            });
+        });
+    </script>
+</body>
+
+</html>

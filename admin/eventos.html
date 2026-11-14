@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark light">
-    <title>Eventos | Painel Administrativo</title>
+    <title>Experiências Gastronômicas | Painel do Chef</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,14 +27,16 @@
 
 <body>
     <nav class="header-menu">
-        <img class="logo" alt="logotipo eventos fatec" title="Logotipo eventos fatec"
-            src="../assets/images/logotipo-eventos-fatec.png" />
+        <a href="index.html" class="brand">
+            <img class="logo" alt="GastroEventos — Painel" title="GastroEventos Culinária"
+                src="../assets/images/logo-gastro.svg" />
+        </a>
         <ul class="navigation">
             <li class="item">
                 <a class="link" href="index.html">Painel</a>
             </li>
             <li class="item">
-                <a class="link active" href="eventos.html">Eventos</a>
+                <a class="link active" href="eventos.html">Experiências</a>
             </li>
             <li class="item">
                 <a class="link" href="categorias.html">Categorias</a>
@@ -43,7 +45,7 @@
                 <a class="link" href="inscritos.html">Inscritos</a>
             </li>
             <li class="item">
-                <a class="link" href="usuarios.html">Usuários</a>
+                <a class="link" href="usuarios.html">Chefs & Usuários</a>
             </li>
             <li class="item">
                 <a class="link" id="logout" href="login.html">Sair</a>
@@ -54,25 +56,25 @@
     <main class="admin">
         <div class="admin-header">
             <div>
-                <h1>Eventos</h1>
-                <p>Gerencie os eventos cadastrados.</p>
+                <h1>Experiências Gastronômicas 🍳</h1>
+                <p>Gerencie oficinas, workshops práticos e degustações cadastradas.</p>
             </div>
-            <button type="button" class="btn-cta" id="novo-evento">Novo evento</button>
+            <button type="button" class="btn-cta" id="novo-evento">Nova experiência</button>
         </div>
 
         <p class="feedback" id="evento-feedback" role="status" aria-live="polite"></p>
 
         <section class="admin-panel">
-            <h2>Eventos cadastrados</h2>
+            <h2>Experiências cadastradas</h2>
 
             <div class="admin-table-wrap">
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>Evento</th>
+                            <th>Experiência</th>
                             <th>Categoria</th>
                             <th>Data</th>
-                            <th>Local</th>
+                            <th>Cozinha / Local</th>
                             <th>Vagas</th>
                             <th>Ações</th>
                         </tr>
@@ -88,14 +90,14 @@
                 <p class="feedback" id="evento-form-feedback" role="alert"></p>
 
                 <div class="form-field">
-                    <label for="campo-titulo">Nome do evento</label>
-                    <input type="text" id="campo-titulo" name="titulo" placeholder="Ex: Curso de Banco de Dados" />
+                    <label for="campo-titulo">Nome da oficina / experiência</label>
+                    <input type="text" id="campo-titulo" name="titulo" placeholder="Ex: Masterclass de Risotos & Harmonização com Vinhos" />
                     <span class="error">O nome é obrigatório</span>
                 </div>
 
                 <div class="form-row">
                     <div class="form-field">
-                        <label for="campo-categoria">Categoria</label>
+                        <label for="campo-categoria">Categoria culinária</label>
                         <select id="campo-categoria" name="categoria" required>
                             <option value="" disabled selected>Carregando categorias...</option>
                         </select>
@@ -117,36 +119,36 @@
 
                 <div class="form-row">
                     <div class="form-field">
-                        <label for="campo-local">Local</label>
-                        <input type="text" id="campo-local" name="local" placeholder="Ex: Bloco C, sala 4" />
+                        <label for="campo-local">Cozinha / Local</label>
+                        <input type="text" id="campo-local" name="local" placeholder="Ex: Cozinha Experimental - Bancada 3" />
                         <span class="error">O local é obrigatório</span>
                     </div>
 
                     <div class="form-field">
                         <label for="campo-endereco">Endereço completo</label>
                         <input type="text" id="campo-endereco" name="endereco"
-                            placeholder="Ex: Campus Fatec São Paulo - Bloco C" />
+                            placeholder="Ex: Espaço Gourmet GastroEventos - Salão Principal" />
                         <span class="error">O endereço é obrigatório</span>
                     </div>
 
                     <div class="form-field">
-                        <label for="campo-organizador">Organização</label>
-                        <input type="text" id="campo-organizador" name="organizador" placeholder="Ex: Prof. Ana Ribeiro" />
-                        <span class="error">O organizador é obrigatório</span>
+                        <label for="campo-organizador">Chef responsável</label>
+                        <input type="text" id="campo-organizador" name="organizador" placeholder="Ex: Chef Renata Vanzetto" />
+                        <span class="error">O chef/responsável é obrigatório</span>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-field">
                         <label for="campo-vagas-totais">Vagas totais</label>
-                        <input type="number" id="campo-vagas-totais" name="vagas_totais" min="0" placeholder="Ex: 40" />
+                        <input type="number" id="campo-vagas-totais" name="vagas_totais" min="0" placeholder="Ex: 20" />
                         <span class="error">Vagas totais é obrigatório</span>
                     </div>
 
                     <div class="form-field">
                         <label for="campo-vagas-restantes">Vagas restantes</label>
                         <input type="number" id="campo-vagas-restantes" name="vagas_restantes" min="0"
-                            placeholder="Ex: 17" />
+                            placeholder="Ex: 15" />
                         <span class="error">Vagas restantes é obrigatório</span>
                     </div>
 
@@ -154,28 +156,28 @@
                         <label for="campo-destaque">Destaque</label>
                         <div class="checkbox-field">
                             <input type="checkbox" id="campo-destaque" name="destaque" />
-                            <label for="campo-destaque">Exibir selo "Destaque" no card</label>
+                            <label for="campo-destaque">Exibir na vitrine principal da cozinha</label>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-field">
-                    <label for="campo-descricao">Descrição completa</label>
+                    <label for="campo-descricao">Descrição do menu e técnicas</label>
                     <textarea id="campo-descricao" name="descricao"
-                        placeholder="Detalhes exibidos na página do evento"></textarea>
+                        placeholder="Detalhes da experiência, cardápio executado, técnicas ensinadas e avental fornecido..."></textarea>
                     <span class="error">Descrição completa é obrigatória</span>
                 </div>
 
                 <div class="form-actions">
                     <button type="button" class="btn-ghost" data-modal-close>Cancelar</button>
-                    <button type="submit" id="salvar-evento" class="call-to-action">Salvar evento</button>
+                    <button type="submit" id="salvar-evento" class="call-to-action">Salvar experiência</button>
                 </div>
             </form>
         </div>
     </main>
 
     <footer class="footer">
-        <p>© 2026 Eventos Fatec — Projeto de Desenvolvimento Web, 2º ciclo.</p>
+        <p>© 2026 GastroEventos — Projeto de Desenvolvimento Web, 2º ciclo.</p>
     </footer>
 
     <script src="../assets/js/utils/dom.js"></script>

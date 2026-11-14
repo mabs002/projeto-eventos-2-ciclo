@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalhes do evento | Eventos Fatec</title>
-    <meta name="description" content="Detalhes, local, horário e inscrição do evento.">
+    <title>Detalhes da Experiência | GastroEventos</title>
+    <meta name="description" content="Detalhes, chef responsável, cozinha, horário e reserva de vaga na oficina gastronômica.">
     <meta name="color-scheme" content="dark light">
     <link rel="stylesheet" href="./assets/css/styles.css">
 
@@ -24,29 +24,29 @@
 
     <nav class="header-menu" aria-label="Principal">
         <a href="index.html" class="brand">
-            <img class="logo" alt="Eventos Fatec — início" src="./assets/images/logotipo-eventos-fatec.png" />
+            <img class="logo" alt="GastroEventos — Início" src="./assets/images/logo-gastro.svg" />
         </a>
         <ul class="navigation">
             <li class="item">
                 <a class="link" href="index.html">Início</a>
             </li>
             <li class="item">
-                <a class="link" href="index.html#eventos">Eventos</a>
+                <a class="link" href="index.html#eventos">Experiências</a>
             </li>
             <li class="item">
                 <a class="link" href="index.html#categorias">Categorias</a>
             </li>
             <li class="item">
-                <a class="call-to-action" href="index.html#eventos">Explorar eventos</a>
+                <a class="call-to-action" href="index.html#eventos">Explorar oficinas</a>
             </li>
         </ul>
     </nav>
 
     <main id="conteudo" class="detail">
         <nav class="breadcrumb" aria-label="Você está em">
-            <a href="index.html">Eventos</a>
+            <a href="index.html">Experiências</a>
             <span aria-hidden="true">/</span>
-            <span id="breadcrumb-titulo" aria-current="page">Carregando...</span>
+            <span id="breadcrumb-titulo" aria-current="page">Carregando oficina...</span>
         </nav>
 
         <div id="detalhe-skeleton" class="detail-skeleton" aria-hidden="true">
@@ -58,15 +58,15 @@
         <div id="detalhe-conteudo" hidden></div>
 
         <div id="detalhe-nao-encontrado" class="empty-state" hidden>
-            <p class="empty-state-title">Evento não encontrado</p>
-            <p>O link pode estar incorreto ou o evento foi removido.</p>
-            <a class="btn-cta" href="index.html#eventos">Ver todos os eventos</a>
+            <p class="empty-state-title">Experiência gastronômica não encontrada</p>
+            <p>O link pode estar incorreto ou a oficina foi finalizada.</p>
+            <a class="btn-cta" href="index.html#eventos">Ver todas as experiências</a>
         </div>
     </main>
 
     <footer class="footer">
-        <p>© 2026 Eventos Fatec — Projeto de Desenvolvimento Web, 2º ciclo.</p>
-        <a class="footer-link" href="admin/login.html">Área do organizador</a>
+        <p>© 2026 GastroEventos — Projeto de Desenvolvimento Web, 2º ciclo.</p>
+        <a class="footer-link" href="admin/login.html">Área do Chef e Organizador</a>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.min.js"></script>

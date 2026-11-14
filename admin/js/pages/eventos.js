@@ -163,7 +163,7 @@
     function openCreate() {
         resetForm();
         state.editingId = null;
-        openForm({ title: "Novo evento", submitLabel: "Cadastrar evento" });
+        openForm({ title: "Nova experiência culinária", submitLabel: "Cadastrar oficina" });
     }
 
     async function openEdit(id, button) {
@@ -179,7 +179,7 @@
             document.getElementById("campo-destaque").checked = Boolean(evento.destaque);
 
             state.editingId = evento.id;
-            openForm({ title: `Editar evento`, submitLabel: "Salvar alterações" });
+            openForm({ title: `Editar experiência culinária`, submitLabel: "Salvar alterações" });
         } catch (error) {
             console.error("[eventos] Falha ao carregar evento:", error);
             dom.showFeedback(elements.feedback, "error", "Não foi possível abrir o evento para edição.");
@@ -207,7 +207,7 @@
 
             state.dialog?.close("saved");
             dom.showFeedback(elements.feedback, "success",
-                isEditing ? "Evento atualizado com sucesso!" : "Evento cadastrado com sucesso!");
+                isEditing ? "Experiência atualizada com sucesso!" : "Experiência gastronômica cadastrada com sucesso!");
             await loadEvents();
         } catch (error) {
             console.error("[eventos] Falha ao salvar:", error);
@@ -223,9 +223,9 @@
     async function handleDelete(button) {
         const { id, nome } = button.dataset;
         const confirmed = await modal.confirm({
-            title: "Excluir evento?",
-            message: `O evento "${nome}" será removido. Esta ação não pode ser desfeita.`,
-            confirmLabel: "Excluir evento"
+            title: "Excluir experiência culinária?",
+            message: `A oficina "${nome}" será removida. Esta ação não pode ser desfeita.`,
+            confirmLabel: "Excluir experiência"
         });
         if (!confirmed) return;
 

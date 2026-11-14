@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark light">
-    <title>Usuários | Painel Administrativo</title>
+    <title>Chefs & Usuários | Painel do Chef</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,14 +27,16 @@
 
 <body>
     <nav class="header-menu">
-        <img class="logo" alt="logotipo eventos fatec" title="Logotipo eventos fatec"
-            src="../assets/images/logotipo-eventos-fatec.png" />
+        <a href="index.html" class="brand">
+            <img class="logo" alt="GastroEventos — Painel" title="GastroEventos Culinária"
+                src="../assets/images/logo-gastro.svg" />
+        </a>
         <ul class="navigation">
             <li class="item">
                 <a class="link" href="index.html">Painel</a>
             </li>
             <li class="item">
-                <a class="link" href="eventos.html">Eventos</a>
+                <a class="link" href="eventos.html">Experiências</a>
             </li>
             <li class="item">
                 <a class="link" href="categorias.html">Categorias</a>
@@ -43,7 +45,7 @@
                 <a class="link" href="inscritos.html">Inscritos</a>
             </li>
             <li class="item">
-                <a class="link active" href="usuarios.html">Usuários</a>
+                <a class="link active" href="usuarios.html">Chefs & Usuários</a>
             </li>
             <li class="item">
                 <a class="link" id="logout" href="login.html">Sair</a>
@@ -54,10 +56,10 @@
     <main class="admin">
         <div class="admin-header">
             <div>
-                <h1>Usuários</h1>
-                <p>Controle quem tem acesso ao painel administrativo.</p>
+                <h1>Chefs & Administradores 🧑‍🍳</h1>
+                <p>Controle quem tem acesso e permissões no painel gastronômico.</p>
             </div>
-            <button type="button" class="btn-cta" id="novo-usuario">Novo usuário</button>
+            <button type="button" class="btn-cta" id="novo-usuario">Novo chef / usuário</button>
         </div>
 
         <p class="feedback" id="usuario-feedback" role="status" aria-live="polite"></p>
@@ -91,14 +93,14 @@
                 <div class="form-row">
                     <div class="form-field">
                         <label for="campo-nome-usuario">Nome completo</label>
-                        <input type="text" id="campo-nome-usuario" name="nome" placeholder="Ex: Ana Ribeiro"
+                        <input type="text" id="campo-nome-usuario" name="nome" placeholder="Ex: Chef Rodrigo Oliveira"
                             maxlength="100" autocomplete="off" required />
                         <span class="error">O nome é obrigatório</span>
                     </div>
 
                     <div class="form-field">
                         <label for="campo-email-usuario">E-mail</label>
-                        <input type="email" id="campo-email-usuario" name="email" placeholder="voce@fatec.sp.gov.br"
+                        <input type="email" id="campo-email-usuario" name="email" placeholder="chef@gastroeventos.com"
                             autocomplete="off" required />
                         <span class="error">O e-mail é obrigatório</span>
                     </div>
@@ -114,16 +116,16 @@
                     </div>
 
                     <div class="form-field">
-                        <label for="campo-papel-usuario">Papel</label>
+                        <label for="campo-papel-usuario">Papel no GastroEventos</label>
                         <select id="campo-papel-usuario" name="papel">
-                            <option value="administrador">Administrador</option>
-                            <option value="usuario">Usuário</option>
+                            <option value="administrador">Administrador / Chef Líder</option>
+                            <option value="usuario">Chef / Organizador de Oficina</option>
                         </select>
                         <span class="error">Selecione um papel</span>
                     </div>
 
                     <div class="form-field">
-                        <label for="campo-status-usuario">Status</label>
+                        <label for="campo-status-usuario">Status da conta</label>
                         <select id="campo-status-usuario" name="status">
                             <option value="ativo">Ativo</option>
                             <option value="inativo">Inativo</option>
@@ -134,14 +136,14 @@
 
                 <div class="form-actions">
                     <button type="button" class="btn-ghost" data-modal-close>Cancelar</button>
-                    <button type="submit" id="salvar-usuario" class="call-to-action">Salvar usuário</button>
+                    <button type="submit" id="salvar-usuario" class="call-to-action">Salvar chef / usuário</button>
                 </div>
             </form>
         </div>
     </main>
 
     <footer class="footer">
-        <p>© 2026 Eventos Fatec — Projeto de Desenvolvimento Web, 2º ciclo.</p>
+        <p>© 2026 GastroEventos — Projeto de Desenvolvimento Web, 2º ciclo.</p>
     </footer>
 
     <script src="../assets/js/utils/dom.js"></script>

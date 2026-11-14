@@ -35,8 +35,8 @@
 
     function ctaHtml(evento, situacao) {
         const nota = {
-            encerrado: "Este evento já aconteceu.",
-            esgotado: "Todas as vagas foram preenchidas."
+            encerrado: "Esta experiência culinária já aconteceu.",
+            esgotado: "Todas as vagas à mesa foram preenchidas."
         }[situacao.status];
 
         return eventoView.inscricaoCta(evento, { block: true }) + (nota ? `<p class="cta-note">${nota}</p>` : "");
@@ -45,7 +45,7 @@
     function render(evento) {
         const situacao = eventoView.situacao(evento);
         const { weekday } = text.dateParts(evento.data);
-        const categoria = evento.categoria?.nome ?? "Evento";
+        const categoria = evento.categoria?.nome ?? "Experiência";
         const mapsUrl = evento.endereco
             ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(evento.endereco)}`
             : null;
@@ -58,7 +58,7 @@
                     <div class="detail-hero-text">
                         <div class="detail-tags">
                             <span class="tag tag--glass">${dom.escapeHtml(categoria)}</span>
-                            ${evento.destaque ? '<span class="tag tag--highlight">Destaque</span>' : ""}
+                            ${evento.destaque ? '<span class="tag tag--highlight">Destaque na Cozinha</span>' : ""}
                         </div>
                         <h1 class="detail-title">${dom.escapeHtml(evento.nome)}</h1>
                         <p class="detail-subtitle">${dom.escapeHtml(capitalize(weekday))}, ${dom.escapeHtml(text.formatDateLong(evento.data))}</p>
@@ -67,23 +67,23 @@
 
                 <div class="detail-columns">
                     <section class="detail-main" data-reveal>
-                        <h2 class="detail-section-title">Sobre o evento</h2>
-                        <p class="detail-description">${dom.escapeHtml(evento.descricao ?? "Descrição em breve.")}</p>
+                        <h2 class="detail-section-title">Sobre a experiência</h2>
+                        <p class="detail-description">${dom.escapeHtml(evento.descricao ?? "Descrição do menu e oficina em breve.")}</p>
 
-                        <h2 class="detail-section-title">Informações</h2>
+                        <h2 class="detail-section-title">Informações do workshop</h2>
                         <ul class="info-list">
                             ${infoItem(ICONS.calendar, "Data", text.formatDateLong(evento.data))}
                             ${infoItem(ICONS.clock, "Horário", evento.horario)}
-                            ${infoItem(ICONS.pin, "Local", evento.local)}
+                            ${infoItem(ICONS.pin, "Cozinha / Local", evento.local)}
                             ${infoItem(ICONS.map, "Endereço", evento.endereco)}
-                            ${infoItem(ICONS.user, "Organização", evento.responsavel)}
+                            ${infoItem(ICONS.user, "Chef / Responsável", evento.responsavel)}
                         </ul>
-                        ${mapsUrl ? `<a class="btn-ghost" href="${mapsUrl}" target="_blank" rel="noopener noreferrer">${ICONS.map} Ver no mapa</a>` : ""}
+                        ${mapsUrl ? `<a class="btn-ghost" href="${mapsUrl}" target="_blank" rel="noopener noreferrer">${ICONS.map} Ver localização no mapa</a>` : ""}
                     </section>
 
                     <aside class="detail-aside" data-reveal>
                         <div class="ticket-card">
-                            <p class="ticket-label">Inscrição gratuita</p>
+                            <p class="ticket-label">Oficina Gastronômica</p>
                             ${eventoView.progress(evento)}
                             ${ctaHtml(evento, situacao)}
                         </div>
@@ -93,7 +93,7 @@
         `;
 
         elements.breadcrumb.textContent = evento.nome;
-        document.title = `${evento.nome} | Eventos Fatec`;
+        document.title = `${evento.nome} | GastroEventos`;
         elements.skeleton.hidden = true;
         elements.content.hidden = false;
         motion.observe(elements.content);

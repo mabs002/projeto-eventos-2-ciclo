@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 64" fill="none" width="280" height="64">
+  <defs>
+    <linearGradient id="gastroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E04826" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+  </defs>
+
+  <!-- Logo Icon: Chef Cloche / Flame / Cutlery in appetizing warm circular badge -->
+  <g transform="translate(4, 6)">
+    <!-- Warm appetizing pastry cream circular badge -->
+    <circle cx="26" cy="26" r="25" fill="#FFF2E8" stroke="#FBD5BF" stroke-width="1.5" />
+    
+    <!-- Cloche dome in tomato/paprika gradient -->
+    <path d="M14 31 C14 20, 38 20, 38 31 Z" fill="url(#gastroGrad)" />
+    <!-- Cloche handle in olive oil gold -->
+    <circle cx="26" cy="18" r="3" fill="#F59E0B" />
+    <!-- Cloche tray base -->
+    <line x1="11" y1="33" x2="41" y2="33" stroke="#E04826" stroke-width="2.5" stroke-linecap="round" />
+    
+    <!-- Delicious steam curls -->
+    <path d="M21 13 Q19 9 22 7" stroke="#E04826" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.75" />
+    <path d="M26 12 Q28 8 26 5" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.85" />
+    <path d="M31 13 Q33 9 30 7" stroke="#E04826" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.75" />
+  </g>
+
+  <!-- Brand Typography for Light Theme -->
+  <g transform="translate(64, 14)">
+    <!-- Main word: Dark roasted coffee + Paprika gradient -->
+    <text x="0" y="22" font-family="'Inter', sans-serif" font-weight="900" font-size="22" letter-spacing="1" fill="#24150E">
+      GASTRO<tspan fill="url(#gastroGrad)">EVENTOS</tspan>
+    </text>
+    <!-- Subtitle tagline -->
+    <text x="1" y="36" font-family="'Inter', sans-serif" font-weight="700" font-size="8" letter-spacing="3" fill="#8C7365">
+      EXPERIÊNCIAS CULINÁRIAS
+    </text>
+  </g>
+</svg>

@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscrição | Eventos Fatec</title>
-    <meta name="description" content="Inscreva-se no evento da Fatec.">
+    <title>Inscrição na Oficina | GastroEventos</title>
+    <meta name="description" content="Garanta sua vaga na oficina culinária da GastroEventos.">
     <meta name="color-scheme" content="dark light">
     <link rel="stylesheet" href="./assets/css/styles.css">
 
@@ -24,29 +24,29 @@
 
     <nav class="header-menu" aria-label="Principal">
         <a href="index.html" class="brand">
-            <img class="logo" alt="Eventos Fatec — início" src="./assets/images/logotipo-eventos-fatec.png" />
+            <img class="logo" alt="GastroEventos — Início" src="./assets/images/logo-gastro.svg" />
         </a>
         <ul class="navigation">
             <li class="item">
                 <a class="link" href="index.html">Início</a>
             </li>
             <li class="item">
-                <a class="link" href="index.html#eventos">Eventos</a>
+                <a class="link" href="index.html#eventos">Experiências</a>
             </li>
             <li class="item">
                 <a class="link" href="index.html#categorias">Categorias</a>
             </li>
             <li class="item">
-                <a class="call-to-action" href="index.html#eventos">Explorar eventos</a>
+                <a class="call-to-action" href="index.html#eventos">Explorar oficinas</a>
             </li>
         </ul>
     </nav>
 
     <main id="conteudo" class="subscription">
         <nav class="breadcrumb" aria-label="Você está em">
-            <a href="index.html">Eventos</a>
+            <a href="index.html">Experiências</a>
             <span aria-hidden="true">/</span>
-            <a id="breadcrumb-evento" href="index.html">Evento</a>
+            <a id="breadcrumb-evento" href="index.html">Oficina</a>
             <span aria-hidden="true">/</span>
             <span aria-current="page">Inscrição</span>
         </nav>
@@ -57,9 +57,9 @@
         </div>
 
         <div id="inscricao-vazio" class="empty-state" hidden>
-            <p class="empty-state-title" id="inscricao-vazio-titulo">Nenhum evento selecionado</p>
-            <p id="inscricao-vazio-texto">Escolha um evento para se inscrever.</p>
-            <a class="btn-cta" href="index.html#eventos">Ver eventos</a>
+            <p class="empty-state-title" id="inscricao-vazio-titulo">Nenhuma oficina selecionada</p>
+            <p id="inscricao-vazio-texto">Escolha uma experiência culinária para se inscrever.</p>
+            <a class="btn-cta" href="index.html#eventos">Ver experiências</a>
         </div>
 
         <div id="inscricao-conteudo" class="subscription-content" hidden>
@@ -67,8 +67,8 @@
 
             <form class="subscription-form" id="form-inscricao" novalidate data-reveal>
                 <div class="subscription-form-header">
-                    <h1 class="title">Garanta sua vaga</h1>
-                    <p>Preencha seus dados. Leva menos de um minuto.</p>
+                    <h1 class="title">Garanta seu avental à mesa 👨‍🍳🍽️</h1>
+                    <p>Preencha seus dados para confirmar sua presença no workshop. Leva menos de um minuto.</p>
                 </div>
 
                 <p class="feedback" id="inscricao-feedback" role="alert" aria-live="assertive"></p>
@@ -109,16 +109,16 @@
                     <span class="error">Informe um WhatsApp válido com DDD.</span>
                 </div>
 
-                <p class="privacy-note">Seus dados são usados apenas pela organização deste evento.</p>
+                <p class="privacy-note">Seus dados são usados exclusivamente para a lista de presença e materiais desta experiência culinária.</p>
 
-                <button type="submit" class="call-to-action" id="botao-inscrever">Confirmar inscrição</button>
+                <button type="submit" class="call-to-action" id="botao-inscrever">Confirmar vaga à mesa</button>
             </form>
         </div>
 
         <!-- Conteúdo do modal de confirmação (clonado por js/pages/inscricao.js) -->
         <template id="tpl-confirmacao">
             <div class="confirmation">
-                <p>Guarde seu código de confirmação:</p>
+                <p>Guarde seu código de confirmação da experiência:</p>
                 <strong class="confirmation-code" data-slot="codigo"></strong>
                 <p class="confirmation-event" data-slot="evento"></p>
             </div>
@@ -126,8 +126,8 @@
     </main>
 
     <footer class="footer">
-        <p>© 2026 Eventos Fatec — Projeto de Desenvolvimento Web, 2º ciclo.</p>
-        <a class="footer-link" href="admin/login.html">Área do organizador</a>
+        <p>© 2026 GastroEventos — Projeto de Desenvolvimento Web, 2º ciclo.</p>
+        <a class="footer-link" href="admin/login.html">Área do Chef e Organizador</a>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.min.js"></script>
