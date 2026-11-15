@@ -31,6 +31,7 @@
     const FIELDS = [
         { id: "campo-titulo", key: "nome", read: read.text,
           rules: [required("O nome é obrigatório"), minLength(3, "O nome deve ter ao menos 3 caracteres")] },
+        { id: "campo-imagem", key: "imagem_url", read: read.text, rules: [] },
         { id: "campo-categoria", key: "categoria_id", read: read.text,
           rules: [required("Selecione uma categoria")] },
         { id: "campo-data", key: "data", read: read.text,
@@ -61,6 +62,7 @@
     // Campo do formulário → coluna do banco (para preencher na edição).
     const FORM_BINDINGS = {
         "campo-titulo": "nome",
+        "campo-imagem": "imagem_url",
         "campo-categoria": "categoria_id",
         "campo-data": "data",
         "campo-horario": "horario",
@@ -90,10 +92,19 @@
         const id = dom.escapeHtml(evento.id);
         const nome = dom.escapeHtml(evento.nome);
         const encerrado = text.isPast(evento.data);
+        const imageUrl = typeof eventoView !== "undefined" ? eventoView.getImage(evento) : (evento.imagem_url || "");
 
         return `
             <tr>
-                <td>${nome}${encerrado ? ' <span class="badge badge-inactive">Encerrado</span>' : ""}</td>
+                <td>
+                    <div class="table-event-cell">
+                        ${imageUrl ? `<img class="table-event-thumb" src="${dom.escapeHtml(imageUrl)}" alt="" onerror="this.style.display='none'" />` : ""}
+                        <div>
+                            <strong>${nome}</strong>
+                            ${encerrado ? ' <span class="badge badge-inactive">Encerrado</span>' : ""}
+                        </div>
+                    </div>
+                </td>
                 <td>${dom.escapeHtml(evento.categoria?.nome ?? "—")}</td>
                 <td>${dom.escapeHtml(text.formatDate(evento.data))}</td>
                 <td>${dom.escapeHtml(evento.local)}</td>

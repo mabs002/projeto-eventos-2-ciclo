@@ -95,6 +95,12 @@
                     <span class="error">O nome é obrigatório</span>
                 </div>
 
+                <div class="form-field">
+                    <label for="campo-imagem">Foto da capa (URL ou caminho em assets/images/eventos/)</label>
+                    <input type="text" id="campo-imagem" name="imagem_url" placeholder="Ex: https://images.unsplash.com/... ou ./assets/images/eventos/massas.jpg" />
+                    <span class="field-hint">Opcional. Se vazio, o sistema usa automaticamente uma foto temática culinária da categoria.</span>
+                </div>
+
                 <div class="form-row">
                     <div class="form-field">
                         <label for="campo-categoria">Categoria culinária</label>
@@ -184,6 +190,7 @@
     <script src="../assets/js/utils/modal.js"></script>
     <script src="../assets/js/utils/text.js"></script>
     <script src="../assets/js/utils/validation.js"></script>
+    <script src="../js/components/eventoView.js"></script>
     <script src="./js/services/categoriasService.js"></script>
     <script src="./js/services/eventosService.js"></script>
     <script src="./js/pages/eventos.js"></script>

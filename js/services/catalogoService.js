@@ -6,7 +6,24 @@
 const catalogoService = (function () {
     "use strict";
 
-    const EVENT_COLUMNS = `
+    const EVENT_COLUMNS_WITH_IMAGE = `
+        id,
+        nome,
+        slug,
+        imagem_url,
+        data,
+        horario,
+        local,
+        endereco,
+        responsavel,
+        vagas_totais,
+        vagas_restantes,
+        destaque,
+        descricao,
+        categoria:categorias ( id, nome, slug, cor )
+    `;
+
+    const EVENT_COLUMNS_BASE = `
         id,
         nome,
         slug,
@@ -21,6 +38,9 @@ const catalogoService = (function () {
         descricao,
         categoria:categorias ( id, nome, slug, cor )
     `;
+
+    // Flag dinâmica: detecta se a tabela remota tem a coluna imagem_url
+    let supportsImageUrl = true;
 
     // Mensagens para os `hint` lançados pela função/trigger no banco.
     const INSCRICAO_ERRORS = Object.freeze({
@@ -37,10 +57,21 @@ const catalogoService = (function () {
 
     return Object.freeze({
         async listEventos() {
-            const { data, error } = await window.supabaseClient
+            const cols = supportsImageUrl ? EVENT_COLUMNS_WITH_IMAGE : EVENT_COLUMNS_BASE;
+            let { data, error } = await window.supabaseClient
                 .from("eventos")
-                .select(EVENT_COLUMNS)
+                .select(cols)
                 .order("data", { ascending: true });
+
+            if (error && supportsImageUrl && (error.code === "42703" || error.message?.includes("imagem_url"))) {
+                supportsImageUrl = false;
+                const retry = await window.supabaseClient
+                    .from("eventos")
+                    .select(EVENT_COLUMNS_BASE)
+                    .order("data", { ascending: true });
+                data = retry.data;
+                error = retry.error;
+            }
 
             if (error) throw error;
             return data ?? [];
@@ -48,11 +79,23 @@ const catalogoService = (function () {
 
         /** @returns {Promise<object|null>} null se não existir */
         async getEvento(id) {
-            const { data, error } = await window.supabaseClient
+            const cols = supportsImageUrl ? EVENT_COLUMNS_WITH_IMAGE : EVENT_COLUMNS_BASE;
+            let { data, error } = await window.supabaseClient
                 .from("eventos")
-                .select(EVENT_COLUMNS)
+                .select(cols)
                 .eq("id", id)
                 .maybeSingle();
+
+            if (error && supportsImageUrl && (error.code === "42703" || error.message?.includes("imagem_url"))) {
+                supportsImageUrl = false;
+                const retry = await window.supabaseClient
+                    .from("eventos")
+                    .select(EVENT_COLUMNS_BASE)
+                    .eq("id", id)
+                    .maybeSingle();
+                data = retry.data;
+                error = retry.error;
+            }
 
             if (error) throw error;
             return data;
@@ -101,7 +144,19 @@ const catalogoService = (function () {
             });
 
             if (error) {
-                const known = INSCRICAO_ERRORS[error.hint];
+                const hint = error.hint || "";
+                const fullMsg = `${error.message || ""} ${error.details || ""} ${hint}`.toLowerCase();
+                const isJaInscrito = hint === "ja_inscrito" || fullMsg.includes("já inscrito") || fullMsg.includes("ja_inscrito");
+
+                if (isJaInscrito) {
+                    const friendly = new Error("Você já está inscrito(a) nesta oficina gastronômica com este e-mail.");
+                    friendly.field = "email";
+                    friendly.code = "ja_inscrito";
+                    friendly.cause = error;
+                    throw friendly;
+                }
+
+                const known = INSCRICAO_ERRORS[hint];
                 const friendly = new Error(known?.message ?? "Não foi possível concluir a inscrição. Tente novamente.");
                 friendly.field = known?.field;
                 friendly.cause = error;

@@ -34,8 +34,12 @@ CREATE TABLE IF NOT EXISTS public.eventos (
     vagas_totais INTEGER DEFAULT 20 NOT NULL,
     vagas_restantes INTEGER DEFAULT 20 NOT NULL,
     destaque BOOLEAN DEFAULT FALSE NOT NULL,
-    descricao TEXT
+    descricao TEXT,
+    imagem_url TEXT
 );
+
+-- Idempotência: adiciona a coluna caso a tabela já tenha sido criada anteriormente
+ALTER TABLE public.eventos ADD COLUMN IF NOT EXISTS imagem_url TEXT;
 
 CREATE INDEX IF NOT EXISTS idx_eventos_slug ON public.eventos (slug);
 
@@ -298,7 +302,7 @@ WHERE NOT EXISTS (
 );
 
 -- Inserir Oficinas e Workshops Culinários
-INSERT INTO public.eventos (nome, slug, categoria_id, data, horario, local, endereco, responsavel, vagas_totais, vagas_restantes, destaque, descricao)
+INSERT INTO public.eventos (nome, slug, categoria_id, data, horario, local, endereco, responsavel, vagas_totais, vagas_restantes, destaque, descricao, imagem_url)
 SELECT
   'Oficina de Massas Frescas & Molhos Italianos',
   'oficina-massas-frescas-molhos-italianos',
@@ -311,12 +315,13 @@ SELECT
   16,
   12,
   true,
-  'Aprenda a fazer do zero tagliatelle, fettuccine e ravióli recheado com ricota e espinafre, acompanhados de molho pomodoro rústico e pesto genovês tradicional. Todos os ingredientes e avental inclusos.'
+  'Aprenda a fazer do zero tagliatelle, fettuccine e ravióli recheado com ricota e espinafre, acompanhados de molho pomodoro rústico e pesto genovês tradicional. Todos os ingredientes e avental inclusos.',
+  'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=1200&q=80'
 FROM public.categorias c
 WHERE c.slug = 'massas-artesanais'
   AND NOT EXISTS (SELECT 1 FROM public.eventos e WHERE e.slug = 'oficina-massas-frescas-molhos-italianos');
 
-INSERT INTO public.eventos (nome, slug, categoria_id, data, horario, local, endereco, responsavel, vagas_totais, vagas_restantes, destaque, descricao)
+INSERT INTO public.eventos (nome, slug, categoria_id, data, horario, local, endereco, responsavel, vagas_totais, vagas_restantes, destaque, descricao, imagem_url)
 SELECT
   'Masterclass de Confeitaria Francesa: Macarons & Eclairs',
   'masterclass-confeitaria-francesa-macarons-eclairs',
@@ -329,12 +334,13 @@ SELECT
   14,
   5,
   true,
-  'Domine a técnica do merengue italiano para macarons perfeitos, além da massa choux para éclairs crocantes com recheio de creme patissière de baunilha de Madagascar e ganache brilhante.'
+  'Domine a técnica do merengue italiano para macarons perfeitos, além da massa choux para éclairs crocantes com recheio de creme patissière de baunilha de Madagascar e ganache brilhante.',
+  'https://images.unsplash.com/photo-1569864321618-62287f3b50c4?auto=format&fit=crop&w=1200&q=80'
 FROM public.categorias c
 WHERE c.slug = 'confeitaria-fina'
   AND NOT EXISTS (SELECT 1 FROM public.eventos e WHERE e.slug = 'masterclass-confeitaria-francesa-macarons-eclairs');
 
-INSERT INTO public.eventos (nome, slug, categoria_id, data, horario, local, endereco, responsavel, vagas_totais, vagas_restantes, destaque, descricao)
+INSERT INTO public.eventos (nome, slug, categoria_id, data, horario, local, endereco, responsavel, vagas_totais, vagas_restantes, destaque, descricao, imagem_url)
 SELECT
   'Workshop de Pães Rústicos e Fermentação Natural (Levain)',
   'workshop-paes-rusticos-fermentacao-natural',
@@ -347,12 +353,13 @@ SELECT
   12,
   4,
   true,
-  'Descubra os segredos da fermentação selvagem: como alimentar e manter sua isca de levain, hidratação correta da farinha, dobras, modelagem e assamento com casca crocante e miolo aerado.'
+  'Descubra os segredos da fermentação selvagem: como alimentar e manter sua isca de levain, hidratação correta da farinha, dobras, modelagem e assamento com casca crocante e miolo aerado.',
+  'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1200&q=80'
 FROM public.categorias c
 WHERE c.slug = 'panificacao-artesanal'
   AND NOT EXISTS (SELECT 1 FROM public.eventos e WHERE e.slug = 'workshop-paes-rusticos-fermentacao-natural');
 
-INSERT INTO public.eventos (nome, slug, categoria_id, data, horario, local, endereco, responsavel, vagas_totais, vagas_restantes, destaque, descricao)
+INSERT INTO public.eventos (nome, slug, categoria_id, data, horario, local, endereco, responsavel, vagas_totais, vagas_restantes, destaque, descricao, imagem_url)
 SELECT
   'Degustação Guiada: Vinhos da América do Sul e Queijos Artesanais',
   'degustacao-guiada-vinhos-america-do-sul-queijos',
@@ -365,12 +372,13 @@ SELECT
   20,
   18,
   false,
-  'Viagem sensorial por rótulos selecionados do Brasil (Serra Gaúcha), Argentina (Mendoza) e Chile (Vale do Maipo), harmonizados com queijos artesanais da Canastra e tábua de charcutaria nobre.'
+  'Viagem sensorial por rótulos selecionados do Brasil (Serra Gaúcha), Argentina (Mendoza) e Chile (Vale do Maipo), harmonizados com queijos artesanais da Canastra e tábua de charcutaria nobre.',
+  'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1200&q=80'
 FROM public.categorias c
 WHERE c.slug = 'enologia-vinhos'
   AND NOT EXISTS (SELECT 1 FROM public.eventos e WHERE e.slug = 'degustacao-guiada-vinhos-america-do-sul-queijos');
 
-INSERT INTO public.eventos (nome, slug, categoria_id, data, horario, local, endereco, responsavel, vagas_totais, vagas_restantes, destaque, descricao)
+INSERT INTO public.eventos (nome, slug, categoria_id, data, horario, local, endereco, responsavel, vagas_totais, vagas_restantes, destaque, descricao, imagem_url)
 SELECT
   'Técnicas de Sushi Tradicional: Do Shari ao Corte do Salmão',
   'tecnicas-sushi-tradicional-shari-corte-salmao',
@@ -383,7 +391,34 @@ SELECT
   15,
   7,
   false,
-  'Passo a passo do preparo correto do shari (arroz temperado), técnicas seguras de limpeza e corte do salmão e atum, montagem de niguiris, temakis e rolls clássicos com esteira de bambu.'
+  'Passo a passo do preparo correto do shari (arroz temperado), técnicas seguras de limpeza e corte do salmão e atum, montagem de niguiris, temakis e rolls clássicos com esteira de bambu.',
+  'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1200&q=80'
 FROM public.categorias c
 WHERE c.slug = 'culinaria-japonesa'
   AND NOT EXISTS (SELECT 1 FROM public.eventos e WHERE e.slug = 'tecnicas-sushi-tradicional-shari-corte-salmao');
+
+-- Atualiza eventos já existentes que ainda não tenham imagem cadastrada
+UPDATE public.eventos
+   SET imagem_url = 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=1200&q=80'
+ WHERE slug = 'oficina-massas-frescas-molhos-italianos'
+   AND (imagem_url IS NULL OR imagem_url = '');
+
+UPDATE public.eventos
+   SET imagem_url = 'https://images.unsplash.com/photo-1569864321618-62287f3b50c4?auto=format&fit=crop&w=1200&q=80'
+ WHERE slug = 'masterclass-confeitaria-francesa-macarons-eclairs'
+   AND (imagem_url IS NULL OR imagem_url = '');
+
+UPDATE public.eventos
+   SET imagem_url = 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1200&q=80'
+ WHERE slug = 'workshop-paes-rusticos-fermentacao-natural'
+   AND (imagem_url IS NULL OR imagem_url = '');
+
+UPDATE public.eventos
+   SET imagem_url = 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1200&q=80'
+ WHERE slug = 'degustacao-guiada-vinhos-america-do-sul-queijos'
+   AND (imagem_url IS NULL OR imagem_url = '');
+
+UPDATE public.eventos
+   SET imagem_url = 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1200&q=80'
+ WHERE slug = 'tecnicas-sushi-tradicional-shari-corte-salmao'
+   AND (imagem_url IS NULL OR imagem_url = '');

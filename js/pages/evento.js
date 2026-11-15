@@ -34,6 +34,22 @@
     }
 
     function ctaHtml(evento, situacao) {
+        const estaInscrito = typeof inscricoesManager !== "undefined" && inscricoesManager.buscarPorEvento(evento.id);
+        if (estaInscrito) {
+            return `
+                <div class="enrolled-box" style="margin-top: 16px;">
+                    <span class="enrolled-badge">✓ Inscrição Confirmada</span>
+                    <p style="font-size: 14px; margin: 4px 0;">Você já garantiu sua vaga à mesa nesta oficina!</p>
+                    <div style="font-size: 13px; color: var(--color-text-muted);">
+                        Código: <strong class="enrolled-code">${dom.escapeHtml(estaInscrito.codigo)}</strong>
+                    </div>
+                    <a class="btn-cta btn-cta--block" href="meu-perfil.html" style="margin-top: 8px;">
+                        Ver em Minhas Inscrições
+                    </a>
+                </div>
+            `;
+        }
+
         const nota = {
             encerrado: "Esta experiência culinária já aconteceu.",
             esgotado: "Todas as vagas à mesa foram preenchidas."
@@ -46,13 +62,18 @@
         const situacao = eventoView.situacao(evento);
         const { weekday } = text.dateParts(evento.data);
         const categoria = evento.categoria?.nome ?? "Experiência";
+        const imagemUrl = eventoView.getImage(evento);
+        const imgTag = imagemUrl
+            ? `<img class="event-cover-img" src="${dom.escapeHtml(imagemUrl)}" alt="${dom.escapeHtml(evento.nome)}" onerror="this.style.display='none'; this.parentElement.classList.remove('has-image');" />`
+            : "";
         const mapsUrl = evento.endereco
             ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(evento.endereco)}`
             : null;
 
         elements.content.innerHTML = `
             <article class="detail-layout" ${eventoView.accentStyle(evento)}>
-                <header class="detail-hero" data-reveal="scale">
+                <header class="detail-hero${imagemUrl ? " has-image" : ""}" data-reveal="scale">
+                    ${imgTag}
                     <span class="event-cover-watermark" aria-hidden="true">${dom.escapeHtml(categoria)}</span>
                     ${eventoView.dateBadge(evento.data)}
                     <div class="detail-hero-text">
@@ -129,6 +150,9 @@
     }
 
     async function init() {
+        if (typeof inscricoesManager !== "undefined") {
+            inscricoesManager.atualizarBadgeMenu();
+        }
         const id = readId();
         if (!id) {
             showNotFound();

@@ -15,6 +15,8 @@
         empty: document.getElementById("inscricao-vazio"),
         emptyTitle: document.getElementById("inscricao-vazio-titulo"),
         emptyText: document.getElementById("inscricao-vazio-texto"),
+        alreadyEnrolled: document.getElementById("inscricao-ja-inscrito"),
+        alreadyEnrolledCode: document.getElementById("ja-inscrito-codigo"),
         content: document.getElementById("inscricao-conteudo"),
         summary: document.getElementById("resumo-evento"),
         form: document.getElementById("form-inscricao"),
@@ -97,9 +99,22 @@
 
     /* ---------- Estados da tela ---------- */
 
+    function showAlreadyEnrolled(codigo) {
+        elements.loading.hidden = true;
+        elements.content.hidden = true;
+        elements.empty.hidden = true;
+        if (elements.alreadyEnrolledCode) {
+            elements.alreadyEnrolledCode.textContent = codigo || "Confirmado";
+        }
+        if (elements.alreadyEnrolled) {
+            elements.alreadyEnrolled.hidden = false;
+        }
+    }
+
     function showEmpty(title, message) {
         elements.loading.hidden = true;
         elements.content.hidden = true;
+        if (elements.alreadyEnrolled) elements.alreadyEnrolled.hidden = true;
         elements.emptyTitle.textContent = title;
         elements.emptyText.textContent = message;
         elements.empty.hidden = false;
@@ -107,8 +122,14 @@
 
     function renderSummary() {
         const categoria = evento.categoria?.nome ?? "Evento";
+        const imagemUrl = eventoView.getImage(evento);
+        const imgTag = imagemUrl
+            ? `<img class="event-cover-img" src="${dom.escapeHtml(imagemUrl)}" alt="${dom.escapeHtml(evento.nome)}" onerror="this.style.display='none'; this.parentElement.classList.remove('has-image');" />`
+            : "";
+
         elements.summary.innerHTML = `
-            <div class="summary-cover" ${eventoView.accentStyle(evento)}>
+            <div class="summary-cover${imagemUrl ? " has-image" : ""}" ${eventoView.accentStyle(evento)}>
+                ${imgTag}
                 <span class="event-cover-watermark" aria-hidden="true">${dom.escapeHtml(categoria)}</span>
                 ${eventoView.dateBadge(evento.data)}
             </div>
@@ -131,6 +152,24 @@
         elements.breadcrumbEvent.href = `evento.html?id=${encodeURIComponent(evento.id)}`;
         document.title = `Inscrição: ${evento.nome} | GastroEventos`;
         elements.birth.max = text.todayIso();
+
+        // Preenche com os dados salvos anteriormente no dispositivo para facilitar
+        if (typeof inscricoesManager !== "undefined") {
+            const saved = inscricoesManager.getDadosParticipante();
+            if (saved) {
+                const nomeInput = document.getElementById("campo-nome");
+                const emailInput = document.getElementById("campo-email");
+                const docInput = document.getElementById("campo-documento");
+                const birthInput = document.getElementById("campo-nascimento");
+                const zapInput = document.getElementById("campo-whatsapp");
+
+                if (nomeInput && !nomeInput.value && saved.nome) nomeInput.value = saved.nome;
+                if (emailInput && !emailInput.value && saved.email) emailInput.value = saved.email;
+                if (docInput && !docInput.value && saved.documento) docInput.value = maskCpf(saved.documento);
+                if (birthInput && !birthInput.value && saved.data_nascimento) birthInput.value = saved.data_nascimento;
+                if (zapInput && !zapInput.value && saved.whatsapp) zapInput.value = maskPhone(saved.whatsapp);
+            }
+        }
 
         elements.loading.hidden = true;
         elements.content.hidden = false;
@@ -169,13 +208,13 @@
             content,
             tone: "success",
             actions: [
-                { label: "Ver experiência", href: `evento.html?id=${encodeURIComponent(evento.id)}`, variant: "primary" },
-                { label: "Fechar", value: "fechar", variant: "ghost" }
+                { label: "Ver em Minhas Inscrições", href: "meu-perfil.html", variant: "primary" },
+                { label: "Ver oficina", href: `evento.html?id=${encodeURIComponent(evento.id)}`, variant: "ghost" }
             ]
         });
 
-        // De volta ao formulário (ex.: inscrever outra pessoa).
-        if (!elements.submit.disabled) elements.form.querySelector("input")?.focus();
+        // Transiciona para a tela de inscrito para evitar reenvio duplicado
+        showAlreadyEnrolled(codigo);
     }
 
     /* ---------- Envio ---------- */
@@ -190,7 +229,37 @@
         dom.setLoading(elements.submit, true, "Confirmando...");
 
         try {
-            const { codigo } = await catalogoService.inscrever(evento.id, dados);
+            const { codigo, inscricaoId } = await catalogoService.inscrever(evento.id, dados);
+
+            // Salva no armazenamento local do dispositivo
+            if (typeof inscricoesManager !== "undefined") {
+                inscricoesManager.salvar({
+                    id: inscricaoId || Number(String(codigo).replace(/\D/g, "")),
+                    codigo: codigo,
+                    evento_id: Number(evento.id),
+                    evento: {
+                        id: evento.id,
+                        nome: evento.nome,
+                        data: evento.data,
+                        horario: evento.horario,
+                        local: evento.local,
+                        endereco: evento.endereco,
+                        imagem_url: evento.imagem_url,
+                        categoria: evento.categoria
+                    },
+                    participante: {
+                        nome: dados.nome,
+                        email: dados.email,
+                        documento: dados.documento,
+                        whatsapp: dados.whatsapp,
+                        data_nascimento: dados.data_nascimento
+                    },
+                    data_inscricao: new Date().toISOString()
+                });
+                inscricoesManager.salvarDadosParticipante(dados);
+                inscricoesManager.atualizarBadgeMenu();
+            }
+
             elements.form.reset();
             validation.clearForm(FIELDS);
             await refreshEvento(); // vagas atualizadas sem sair da página
@@ -203,7 +272,13 @@
                 dom.showFieldError(input, error.message);
                 input.focus();
             }
-            dom.showFeedback(elements.feedback, "error", error.message);
+
+            if (error.code === "ja_inscrito") {
+                dom.showFeedback(elements.feedback, "error",
+                    `${error.message} <a href="meu-perfil.html" style="color:inherit; text-decoration:underline; font-weight:bold; margin-left:6px;">Acesse Minhas Inscrições</a>`);
+            } else {
+                dom.showFeedback(elements.feedback, "error", error.message);
+            }
         } finally {
             dom.setLoading(elements.submit, false);
             if (!eventoView.situacao(evento).aberto) elements.submit.disabled = true; // esgotou
@@ -222,10 +297,23 @@
     }
 
     async function init() {
+        if (typeof inscricoesManager !== "undefined") {
+            inscricoesManager.atualizarBadgeMenu();
+        }
+
         const id = new URLSearchParams(window.location.search).get("id");
         if (!/^\d+$/.test(id ?? "")) {
             showEmpty("Nenhuma experiência selecionada", "Escolha uma oficina gastronômica para se inscrever.");
             return;
+        }
+
+        // Se o participante já estiver inscrito nesta experiência, exibe a confirmação direto e bloqueia duplicidade
+        if (typeof inscricoesManager !== "undefined") {
+            const inscricaoExistente = inscricoesManager.buscarPorEvento(id);
+            if (inscricaoExistente) {
+                showAlreadyEnrolled(inscricaoExistente.codigo);
+                return;
+            }
         }
 
         try {

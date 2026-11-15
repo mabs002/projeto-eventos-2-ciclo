@@ -34,10 +34,7 @@
                 <a class="link" href="index.html#eventos">Experiências</a>
             </li>
             <li class="item">
-                <a class="link" href="index.html#categorias">Categorias</a>
-            </li>
-            <li class="item">
-                <a class="call-to-action" href="index.html#eventos">Explorar oficinas</a>
+                <a class="link" href="meu-perfil.html">Minhas Inscrições <span class="nav-inscricoes-count" style="display:none;">0</span></a>
             </li>
         </ul>
     </nav>
@@ -54,6 +51,20 @@
         <div id="inscricao-carregando" class="detail-skeleton detail-skeleton--compact" aria-hidden="true">
             <span class="sk-line"></span>
             <span class="sk-line sk-line--short"></span>
+        </div>
+
+        <div id="inscricao-ja-inscrito" class="empty-state enrolled-status-card" hidden style="max-width: 600px; margin: 32px auto; padding: 36px 28px; text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 12px;">👨‍🍳🎉</div>
+            <h1 class="empty-state-title" style="font-size: 24px; color: var(--color-text);">Você já está inscrito(a) nesta experiência!</h1>
+            <p style="color: var(--color-text-muted); margin: 8px 0 20px;">Sua vaga à mesa já foi confirmada anteriormente para esta oficina.</p>
+            <div style="margin-bottom: 24px;">
+                <span style="font-size: 13px; color: var(--color-text-muted); display: block; margin-bottom: 6px;">Seu código de confirmação:</span>
+                <strong class="enrolled-code" id="ja-inscrito-codigo">INSC-000000</strong>
+            </div>
+            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                <a class="btn-cta" href="meu-perfil.html">Ver em Minhas Inscrições</a>
+                <a class="btn-ghost" href="index.html#eventos">Explorar outras oficinas</a>
+            </div>
         </div>
 
         <div id="inscricao-vazio" class="empty-state" hidden>
@@ -137,6 +148,7 @@
     <script src="./assets/js/utils/text.js"></script>
     <script src="./assets/js/utils/validation.js"></script>
     <script src="./assets/js/utils/modal.js"></script>
+    <script src="./assets/js/utils/inscricoes.js"></script>
     <script src="./assets/js/motion.js"></script>
     <script src="./js/services/catalogoService.js"></script>
     <script src="./js/components/eventoView.js"></script>

@@ -6,7 +6,18 @@ const eventosService = (function () {
     "use strict";
 
     const TABLE = "eventos";
-    const LIST_COLUMNS = `
+    const LIST_COLUMNS_WITH_IMAGE = `
+        id,
+        nome,
+        slug,
+        imagem_url,
+        data,
+        local,
+        vagas_totais,
+        vagas_restantes,
+        categoria:categorias ( id, nome, slug )
+    `;
+    const LIST_COLUMNS_BASE = `
         id,
         nome,
         data,
@@ -16,12 +27,25 @@ const eventosService = (function () {
         categoria:categorias ( id, nome )
     `;
 
+    let supportsImageUrl = true;
+
     return Object.freeze({
         async list() {
-            const { data, error } = await window.supabaseClient
+            const cols = supportsImageUrl ? LIST_COLUMNS_WITH_IMAGE : LIST_COLUMNS_BASE;
+            let { data, error } = await window.supabaseClient
                 .from(TABLE)
-                .select(LIST_COLUMNS)
+                .select(cols)
                 .order("data", { ascending: true });
+
+            if (error && supportsImageUrl && (error.code === "42703" || error.message?.includes("imagem_url"))) {
+                supportsImageUrl = false;
+                const retry = await window.supabaseClient
+                    .from(TABLE)
+                    .select(LIST_COLUMNS_BASE)
+                    .order("data", { ascending: true });
+                data = retry.data;
+                error = retry.error;
+            }
 
             if (error) throw error;
             return data ?? [];
@@ -40,35 +64,77 @@ const eventosService = (function () {
 
         /** Evento completo para preencher o formulário de edição. */
         async getById(id) {
-            const { data, error } = await window.supabaseClient
+            const selectFields = supportsImageUrl
+                ? `id, nome, slug, imagem_url, categoria_id, data, horario, local, endereco, responsavel,
+                   vagas_totais, vagas_restantes, destaque, descricao`
+                : `id, nome, categoria_id, data, horario, local, endereco, responsavel,
+                   vagas_totais, vagas_restantes, destaque, descricao`;
+
+            let { data, error } = await window.supabaseClient
                 .from(TABLE)
-                .select(`id, nome, categoria_id, data, horario, local, endereco, responsavel,
-                         vagas_totais, vagas_restantes, destaque, descricao`)
+                .select(selectFields)
                 .eq("id", id)
                 .single();
+
+            if (error && supportsImageUrl && (error.code === "42703" || error.message?.includes("imagem_url"))) {
+                supportsImageUrl = false;
+                const retry = await window.supabaseClient
+                    .from(TABLE)
+                    .select(`id, nome, categoria_id, data, horario, local, endereco, responsavel,
+                             vagas_totais, vagas_restantes, destaque, descricao`)
+                    .eq("id", id)
+                    .single();
+                data = retry.data;
+                error = retry.error;
+            }
 
             if (error) throw error;
             return data;
         },
 
         async update(id, payload) {
-            const { data, error } = await window.supabaseClient
+            let { data, error } = await window.supabaseClient
                 .from(TABLE)
                 .update(payload)
                 .eq("id", id)
                 .select("id")
                 .single(); // sem linha (RLS/inexistente) → erro, em vez de "sucesso" silencioso
 
+            if (error && (error.code === "42703" || error.message?.includes("imagem_url"))) {
+                supportsImageUrl = false;
+                const { imagem_url, ...fallbackPayload } = payload;
+                const retry = await window.supabaseClient
+                    .from(TABLE)
+                    .update(fallbackPayload)
+                    .eq("id", id)
+                    .select("id")
+                    .single();
+                data = retry.data;
+                error = retry.error;
+            }
+
             if (error) throw error;
             return data;
         },
 
         async create(payload) {
-            const { data, error } = await window.supabaseClient
+            let { data, error } = await window.supabaseClient
                 .from(TABLE)
                 .insert(payload)
                 .select("id")
                 .single();
+
+            if (error && (error.code === "42703" || error.message?.includes("imagem_url"))) {
+                supportsImageUrl = false;
+                const { imagem_url, ...fallbackPayload } = payload;
+                const retry = await window.supabaseClient
+                    .from(TABLE)
+                    .insert(fallbackPayload)
+                    .select("id")
+                    .single();
+                data = retry.data;
+                error = retry.error;
+            }
 
             if (error) throw error;
             return data;

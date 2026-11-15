@@ -58,6 +58,14 @@ O código foi completamente reestruturado em módulos profissionais e desacoplad
 - **`admin/inscritos.html` & `admin/js/pages/inscritos.js`**:
   - Tabela paginada com filtro dinâmico por oficina e sincronização na URL (`?evento=ID&pagina=N`).
   - Remoção de inscrição com devolução instantânea da vaga.
+
+### 7. 📸 Fotos Temáticas e Capas Culinárias de Alta Resolução
+- **Capas com fotos gastronômicas** nos cards da página inicial (vitrine e carrossel), no cabeçalho da oficina (`evento.html`) e no resumo de inscrição (`inscricao.html`).
+- **Resolução inteligente com fallback automático**:
+  1. Se o evento possuir uma URL ou caminho de foto cadastrado (`imagem_url`), ele é utilizado.
+  2. Caso contrário, o sistema mapeia fotos temáticas culinárias em alta resolução pelo slug do evento ou categoria (massas italianas, confeitaria/macarons, pães levain, degustação de vinhos, sushi master, carnes nobres, cozinha vegana).
+  3. Se a imagem falhar ao carregar ou o usuário estiver sem internet, o visual recorre automaticamente aos gradientes originais das categorias.
+- **Suporte a fotos locais**: Criada a pasta `assets/images/eventos/` para você colocar fotos locais do computador (ex: `massas.jpg`, `confeitaria.jpg`, etc.) ou inserir URLs diretamente no formulário do painel do chef (`admin/eventos.html`).
 - **`admin/usuarios.html` & `admin/js/pages/usuarios.js`**:
   - Gestão de contas do painel com atribuição de papéis (Administrador / Chef Líder e Chef / Organizador) e status (Ativo / Inativo).
 - **`admin/js/guard.js`**: Proteção de rotas no `<head>` com `data-auth="required"` para impedir que o conteúdo do painel apareça antes da validação da sessão (sem "flash" de tela).

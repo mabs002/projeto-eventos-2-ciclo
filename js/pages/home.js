@@ -20,6 +20,10 @@
         chips: document.getElementById("lista-categorias"),
         grid: document.getElementById("lista-eventos"),
         counter: document.getElementById("contador-eventos"),
+        sectionTitle: document.getElementById("titulo-eventos"),
+        activeSearchInfo: document.getElementById("busca-ativa-info"),
+        linkNavInicio: document.getElementById("nav-inicio"),
+        linkNavExperiencias: document.getElementById("nav-experiencias"),
         featuredSection: document.getElementById("destaques"),
         carousel: document.getElementById("carrossel-destaques"),
         prev: document.getElementById("carrossel-anterior"),
@@ -38,6 +42,38 @@
 
     const normalize = (value) => text.slugify(value).replace(/-/g, " ");
 
+    function matchToken(token, text) {
+        if (text.includes(token)) return true;
+        // Tolerância para variações no português
+        if (token === "pao" && text.includes("paes")) return true;
+        if (token === "paes" && text.includes("pao")) return true;
+        if (token.length > 3 && token.endsWith("s") && text.includes(token.slice(0, -1))) return true;
+        if (token.length > 3 && token.endsWith("es") && text.includes(token.slice(0, -2))) return true;
+        return false;
+    }
+
+    function matchesBusca(evento, termo) {
+        if (!termo) return true;
+        const termoLimpo = normalize(termo).trim();
+        if (!termoLimpo) return true;
+
+        const tokens = termoLimpo.split(/\s+/).filter(Boolean);
+        if (tokens.length === 0) return true;
+
+        // Texto pesquisável completo: nome da oficina, chef/responsável, descrição completa, local, endereço e especialidade
+        const textoEvento = normalize([
+            evento.nome,
+            evento.responsavel,
+            evento.descricao,
+            evento.local,
+            evento.endereco,
+            evento.categoria?.nome,
+            evento.horario
+        ].filter(Boolean).join(" "));
+
+        return tokens.every((token) => matchToken(token, textoEvento));
+    }
+
     function matchesPeriodo(evento, periodo) {
         const hoje = text.todayIso();
         switch (periodo) {
@@ -50,11 +86,10 @@
 
     function filtrar() {
         const { termo, periodo, categoriaId } = state.filtros;
-        const termoNormalizado = normalize(termo);
 
         const resultado = state.eventos.filter((evento) =>
-            (!termoNormalizado || normalize(evento.nome).includes(termoNormalizado)) &&
-            (!categoriaId || String(evento.categoria?.id) === categoriaId) &&
+            matchesBusca(evento, termo) &&
+            (!categoriaId || String(evento.categoria?.id) === String(categoriaId)) &&
             matchesPeriodo(evento, periodo)
         );
 
@@ -122,18 +157,89 @@
             .join("");
     }
 
+    function updateSearchUI(total) {
+        const { termo, categoriaId, periodo } = state.filtros;
+        const isSearching = Boolean(termo);
+        const hasCategory = Boolean(categoriaId);
+        const isCustomPeriod = periodo && periodo !== "proximos";
+
+        // Título dinâmico da seção
+        if (elements.sectionTitle) {
+            if (isSearching) {
+                elements.sectionTitle.innerHTML = `Resultados da busca: <span class="highlight">“${dom.escapeHtml(termo)}”</span>`;
+            } else if (hasCategory) {
+                const cat = state.categorias.find((c) => String(c.id) === String(categoriaId));
+                elements.sectionTitle.innerHTML = `Experiências: <span class="highlight">${dom.escapeHtml(cat ? cat.nome : "Especialidade")}</span>`;
+            } else if (periodo === "encerrados") {
+                elements.sectionTitle.innerHTML = `Experiências <span class="highlight">já encerradas</span>`;
+            } else {
+                elements.sectionTitle.innerHTML = `Todas as <span class="highlight">experiências culinárias</span>`;
+            }
+        }
+
+        // Contador contextual
+        if (elements.counter) {
+            if (isSearching) {
+                elements.counter.textContent = `${total} ${total === 1 ? "experiência encontrada para sua busca" : "experiências encontradas para sua busca"}`;
+            } else {
+                elements.counter.textContent = `${total} ${total === 1 ? "experiência encontrada" : "experiências encontradas"}`;
+            }
+        }
+
+        // Barra informativa de filtros ativos
+        if (elements.activeSearchInfo) {
+            if (isSearching || hasCategory || isCustomPeriod) {
+                const badges = [];
+                if (isSearching) {
+                    badges.push(`<span class="search-term-badge">Busca: “${dom.escapeHtml(termo)}”</span>`);
+                }
+                if (hasCategory) {
+                    const cat = state.categorias.find((c) => String(c.id) === String(categoriaId));
+                    if (cat) badges.push(`<span class="search-term-badge">Especialidade: ${dom.escapeHtml(cat.nome)}</span>`);
+                }
+                if (isCustomPeriod) {
+                    const periodLabels = { mes: "Este mês", todos: "Todas as datas", encerrados: "Encerradas" };
+                    badges.push(`<span class="search-term-badge">Quando: ${periodLabels[periodo] || periodo}</span>`);
+                }
+
+                elements.activeSearchInfo.innerHTML = `
+                    ${badges.join(" ")}
+                    <button type="button" class="btn-clear-search" data-action="limpar-busca">✕ Limpar filtros e ver tudo</button>
+                `;
+                elements.activeSearchInfo.hidden = false;
+            } else {
+                elements.activeSearchInfo.innerHTML = "";
+                elements.activeSearchInfo.hidden = true;
+            }
+        }
+
+        // Oculta os destaques quando há busca por termo ativa para focar 100% nos resultados
+        if (elements.featuredSection) {
+            if (isSearching) {
+                elements.featuredSection.hidden = true;
+            } else {
+                renderFeatured();
+            }
+        }
+    }
+
     function renderGrid() {
         const eventos = filtrar();
         const total = eventos.length;
-        elements.counter.textContent = `${total} ${total === 1 ? "experiência encontrada" : "experiências encontradas"}`;
+
+        updateSearchUI(total);
 
         if (total === 0) {
             const sugereTodos = state.filtros.periodo !== "todos";
+            const termoMsg = state.filtros.termo ? ` para “${dom.escapeHtml(state.filtros.termo)}”` : "";
             elements.grid.innerHTML = `
                 <div class="empty-state" data-reveal>
-                    <p class="empty-state-title">Nenhuma experiência culinária encontrada</p>
-                    <p>Tente buscar por outro termo, chef, especialidade ou período.</p>
-                    ${sugereTodos ? '<button type="button" class="btn-ghost" data-action="ver-todos">Ver todas as datas</button>' : ""}
+                    <p class="empty-state-title">Nenhuma experiência culinária encontrada${termoMsg}</p>
+                    <p>Tente buscar por outro prato, ingrediente, chef ou limpar os filtros de busca.</p>
+                    <div style="display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap;">
+                        <button type="button" class="btn-cta btn-cta--sm" data-action="limpar-busca">Ver todas as experiências</button>
+                        ${sugereTodos ? '<button type="button" class="btn-ghost" data-action="ver-todos">Buscar em todas as datas</button>' : ""}
+                    </div>
                 </div>`;
         } else {
             elements.grid.innerHTML = eventos.map((evento) => eventoView.card(evento)).join("");
@@ -203,17 +309,88 @@
             if (chip) setFiltro({ categoriaId: chip.dataset.categoria });
         });
 
-        elements.grid.addEventListener("click", (event) => {
-            const action = event.target.closest("[data-action]")?.dataset.action;
-            if (action === "ver-todos") setFiltro({ periodo: "todos" });
-            if (action === "recarregar") load();
+        // Ações gerais da interface (limpar busca, ver todos, tentar novamente)
+        document.addEventListener("click", (event) => {
+            const actionTarget = event.target.closest("[data-action]");
+            if (!actionTarget) return;
+
+            const action = actionTarget.dataset.action;
+            if (action === "limpar-busca") {
+                event.preventDefault();
+                setFiltro({ termo: "", periodo: "proximos", categoriaId: "" });
+            } else if (action === "ver-todos") {
+                event.preventDefault();
+                setFiltro({ periodo: "todos" });
+            } else if (action === "recarregar") {
+                event.preventDefault();
+                load();
+            }
         });
 
-        // "Buscar": aplica e leva até os resultados.
+        // Alternância inteligente do estado ativo no menu
+        function setActiveNav(activeId) {
+            if (elements.linkNavInicio) {
+                const isInicio = activeId === "inicio";
+                elements.linkNavInicio.classList.toggle("active", isInicio);
+                if (isInicio) elements.linkNavInicio.setAttribute("aria-current", "page");
+                else elements.linkNavInicio.removeAttribute("aria-current");
+            }
+            if (elements.linkNavExperiencias) {
+                const isExp = activeId === "experiencias";
+                elements.linkNavExperiencias.classList.toggle("active", isExp);
+                if (isExp) elements.linkNavExperiencias.setAttribute("aria-current", "page");
+                else elements.linkNavExperiencias.removeAttribute("aria-current");
+            }
+        }
+
+        if (elements.linkNavInicio) {
+            elements.linkNavInicio.addEventListener("click", (e) => {
+                e.preventDefault();
+                setActiveNav("inicio");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+                window.history.replaceState(null, "", window.location.pathname);
+            });
+        }
+
+        // Clique em "Experiências" na barra de navegação: ativa o link, redefine a busca e rola até as oficinas
+        if (elements.linkNavExperiencias) {
+            elements.linkNavExperiencias.addEventListener("click", (e) => {
+                e.preventDefault();
+                setActiveNav("experiencias");
+                setFiltro({ termo: "", periodo: "proximos", categoriaId: "" });
+                document.getElementById("eventos")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+        }
+
+        // Observa a rolagem para sincronizar automaticamente quem fica ativo (laranja)
+        if ("IntersectionObserver" in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        setActiveNav("experiencias");
+                    } else if (window.scrollY < 300) {
+                        setActiveNav("inicio");
+                    }
+                });
+            }, { rootMargin: "-20% 0px -60% 0px" });
+
+            const secEventos = document.getElementById("eventos");
+            if (secEventos) observer.observe(secEventos);
+        }
+
+        // "Buscar": aplica os termos/filtros e leva com scroll suave até a área de resultados
         elements.form.addEventListener("submit", (event) => {
             event.preventDefault();
-            setFiltro({ termo: elements.search.value.trim() });
-            document.getElementById("eventos").scrollIntoView({ block: "start" });
+            setActiveNav("experiencias");
+            setFiltro({
+                termo: elements.search.value.trim(),
+                periodo: elements.period.value,
+                categoriaId: elements.categorySelect.value
+            });
+            const secEventos = document.getElementById("eventos");
+            if (secEventos) {
+                secEventos.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
         });
 
         elements.prev.addEventListener("click", () => scrollCarousel(-1));
@@ -280,6 +457,9 @@
 
     function init() {
         eventoView.hydrateIcons();
+        if (typeof inscricoesManager !== "undefined") {
+            inscricoesManager.atualizarBadgeMenu();
+        }
         readFiltersFromUrl();
         syncControls();
         bindEvents();
